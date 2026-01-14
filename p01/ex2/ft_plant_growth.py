@@ -17,10 +17,14 @@ class plant:
         return f"Growth this week: +{grow}cm"
 
 
-if __name__ == "__main__":
+def main():
     plant1 = plant("Rose", 25, 30)
     print("=== Day 1 ===")
     print(plant1.aff_plant())
     print("=== Day 7 ===")
     print(plant1.grow_plant())
     print(plant1.growth_plant())
+
+
+if __name__ == "__main__":
+    main()
