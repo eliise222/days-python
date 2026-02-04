@@ -1,17 +1,29 @@
-class plant:
-    def __init__(self, name, height, age):
+class Plant:
+    """
+    Class to store a plant's name, height, and age.
+    """
+    def __init__(self, name: str, height: int, age: int) -> None:
+        """
+        Initializes the plant attributes.
+        """
         self.name = name
         self.height = height
         self.age = age
 
-    def aff_plant(self):
+    def aff_plant(self) -> str:
+        """
+        Returns the plant information as a string.
+        """
         return f"{self.name}: {self.height}cm, {self.age} days old"
 
 
-def main():
-    plant1 = plant("Rose", 25, 30)
-    plant2 = plant("Sunflower", 80, 45)
-    plant3 = plant("Cactus", 15, 120)
+def main() -> None:
+    """
+    Creates and displays three plants.
+    """
+    plant1 = Plant("Rose", 25, 30)
+    plant2 = Plant("Sunflower", 80, 45)
+    plant3 = Plant("Cactus", 15, 120)
     print("=== Garden Plant Registry ===")
     print(plant1.aff_plant())
     print(plant2.aff_plant())
