@@ -1,4 +1,4 @@
-def ft_harvest_total():
+def ft_harvest_total() -> None:
     day_1 = int(input("Day 1 harvest: "))
     day_2 = int(input("Day 2 harvest: "))
     day_3 = int(input("Day 3 harvest: "))
@@ -6,4 +6,4 @@ def ft_harvest_total():
     print("Total harvest:", total)
 
 
-ft_harvest_total()
+# ft_harvest_total()

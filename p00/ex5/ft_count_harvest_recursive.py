@@ -1,10 +1,7 @@
-def ft_count_harvest_recursive():
-    try:
-        total_days = int(input("Days until harvest: "))
-    except EOFError:
-        return
+def ft_count_harvest_recursive() -> None:
+    total_days = int(input("Days until harvest: "))
 
-    def count(current):
+    def count(current: int) -> None:
         if current > total_days:
             print("Harvest time!")
             return
@@ -13,4 +10,4 @@ def ft_count_harvest_recursive():
     count(1)
 
 
-ft_count_harvest_recursive()
+# ft_count_harvest_recursive()
