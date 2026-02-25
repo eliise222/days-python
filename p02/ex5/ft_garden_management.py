@@ -77,11 +77,12 @@ class Garden():
         print(f"{plant.name}: healthy (water: {plant.water}, sun: \
 {plant.sun})")
 
+
 def test_garden_management():
 
     print("=== Garden Management System ===\n")
     manager = Garden()
-    
+
     plants = [Plant("tomato", 5, 8),
               Plant("lettuce", 15, 5),
               Plant(None, 5, 0)]
@@ -119,5 +120,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
