@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Dict, Union, Optional
+from typing import Any, List, Dict, Union
 
 
 class DataStream(ABC):
@@ -74,9 +74,9 @@ class StreamProcessor:
         print("\n=== Polymorphic Stream Processing ===")
         print("Processing mixed stream types through unified interface...\n")
         print("Batch 1 Results:")
-        
+
         labels = ["Sensor data", "Transaction data", "Event data"]
-        
+
         for stream, batch, label in zip(self.streams, all_batch, labels):
             try:
                 res = stream.process_batch(batch)
@@ -108,24 +108,23 @@ def main():
                                                     'logout'])}\n")
 
     processor = StreamProcessor([s_sensor, t_transaction, e_event])
-    
+
     all_data = [
-        [23.0, 24.5, 21.5],
+        [23.0, 24.5],
         [{"type": "buy", "amount": 100}, {"type": "sell", "amount": 150},
          {"type": "buy", "amount": 75}],
         ["login", "error", "logout"]
     ]
 
     processor.execute(all_data)
+    high_temp = len([t for t in all_data[0] if t > 22])
+    large_trans = len([t for t in all_data[1] if t['amount'] > 120])
 
-    print("Stream filtering active: High-priority data only")
-    print("All streams processed successfully. Nexus throughput optimal.")
+    print("\nStream filtering active: High-priority data only")
+    print(f"Filtered results: {high_temp} critical sensor alerts, \
+{large_trans} large transaction")
 
-    print("\n=== FINAL SYSTEM STATISTICS ===")
-    for d in [s_sensor, t_transaction, e_event]:
-        stats = d.get_stats()
-        print(f"ID: {stats['stream_id']} | Total Processed: \
-{stats['stream_count']}")
+    print("\nAll streams processed successfully. Nexus throughput optimal.")
 
 
 if __name__ == "__main__":
