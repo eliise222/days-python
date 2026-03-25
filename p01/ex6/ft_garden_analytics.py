@@ -1,185 +1,186 @@
-class Plant():
+#!/usr/bin/env python3
+
+class Plant:
     """
-    Base class representing a generic plant with a name and height.
+    Base class representing a generic plant with an internal tracking system.
     """
-    def __init__(self, name: str, height: int):
+    class _Stats:
         """
-        Initializes a generic Plant with a name and height in cm.
+        Nested class to track and display execution statistics for each plant.
         """
-        self.name = name
-        self.height = height
+        def __init__(self) -> None:
+            self.grow_calls: int = 0
+            self.age_calls: int = 0
+            self.show_calls: int = 0
 
-
-class FloweringPlant(Plant):
-    """
-    Represents a plant that produces flowers, inheriting from Plant.
-    """
-    def __init__(self, name: str, height: int, color: str) -> None:
-        """
-        Initializes a FloweringPlant with an additional color attribute.
-        """
-        super().__init__(name, height)
-        self.color = color
-
-
-class PrizeFlower(FloweringPlant):
-    """
-    Premium flower type for competitions, inheriting from FloweringPlant.
-    """
-    def __init__(self, name: str, height: int, color: str, prize: int) -> None:
-        """
-        Initializes a PrizeFlower with competition prize points.
-        """
-        super().__init__(name, height, color)
-        self.prize = prize
-
-
-class Garden:
-    """
-    Manages a collection of plants and calculates garden-wide metrics.
-    """
-    total_garden = 0
-    all_gardens = []
-
-    def __init__(self, name: str) -> None:
-        """
-        Initializes a Garden and registers it in the global garden list.
-        """
-        self.name = name
-        self.all_plants = []
-        Garden.total_garden += 1
-        self.all_gardens.append(self)
-
-    def add_plants(self, plant: "Plant") -> None:
-        """
-        Adds a plant object to the current garden's collection.
-        """
-        self.all_plants.append(plant)
-        print(f"Added {plant.name} to {self.name}'s garden")
-
-    def garden_score(self) -> int:
-        """
-        Calculates the total score of the garden based on plant heights.
-        """
-        total_height = 0
-        for plt in self.all_plants:
-            total_height += plt.height
-        score = total_height * 1.23
-        return int(score)
-
-
-class GardenManager:
-    """
-    Orchestrates multiple gardens and provides analytical tools.
-    """
-    def create_garden_network(cls) -> "GardenManager":
-        """
-        Class method to initialize the management system.
-        """
-        print("=== Garden Management System Demo ===\n")
-        return cls()
-    create_garden_network = classmethod(create_garden_network)
-
-    def height_valid(height: int) -> bool:
-        """
-        Static utility method to validate if a height value is non-negative.
-        """
-        if height >= 0:
-            return True
-    height_valid = staticmethod(height_valid)
-
-    class GardenStats:
-        """
-        Nested helper class to calculate plant type distributions.
-        """
-        def count_plants(plants_list: list) -> tuple:
+        def display(self) -> None:
             """
-            Analyzes the list of plants to categorize them by type.
+            Displays the basic collected statistics.
             """
-            plt = 0
-            prize = 0
-            flower = 0
-            for plant in plants_list:
-                if isinstance(plant, PrizeFlower):
-                    prize += 1
-                elif isinstance(plant, FloweringPlant):
-                    flower += 1
-                else:
-                    plt += 1
-            return (plt, prize, flower, len(plants_list))
-        count_plants = staticmethod(count_plants)
+            print(f"Stats: {self.grow_calls} grow, {self.age_calls} age, "
+                  f"{self.show_calls} show")
 
-    def grow_plants(garden: "Garden") -> tuple:
+    def __init__(self, name: str, height: float, age: int) -> None:
         """
-        Simulates growth for all plants in a specific garden.
+        Initializes a plant and its internal statistics system.
         """
-        add = 1
-        tot_add = 0
-        print(f"\n{garden.name} is helping all plants grow...")
-        for plt in garden.all_plants:
-            plt.height += add
-            tot_add += add
-            print(f"{plt.name} grew {add} cm")
-        return GardenManager.GardenStats.count_plants(garden.all_plants), \
-            tot_add
-    grow_plants = staticmethod(grow_plants)
+        self.name: str = name
+        self._height: float = float(height)
+        self._age: int = age
+        self._stats = self._Stats()
 
-    def show_garden(self, garden: "Garden") -> None:
+    @staticmethod
+    def is_older_than_year(age_in_days: int) -> bool:
         """
-        Displays a detailed status report for a specific garden.
+        Checks if a given age in days is strictly older than a year.
         """
-        stats, tot_add = self.grow_plants(garden)
-        plnt, prz, flw, tt = stats
-        print(f"\n=== {garden.name}'s Garden Report ===")
-        print("Plants in garden:")
-        for plt in garden.all_plants:
-            print(f"- {plt.name}: {plt.height}cm", end="")
-            if isinstance(plt, FloweringPlant):
-                print(f", {plt.color} flowers (blooming)", end="")
-            if isinstance(plt, PrizeFlower):
-                print(f", Prize Points: {plt.prize}", end="")
-            print()
-        print(f"\nPlants added: {tt}, Total growth: {tot_add}cm")
-        print(f"Plant types: {plnt} regular, {flw} flowering, {prz} prize \
-flowers\n")
+        return age_in_days > 365
 
-    def display_garden_scores(cls) -> None:
+    @classmethod
+    def create_anonymous(cls) -> "Plant":
         """
-        Class method to display validated scores for all gardens.
+        Creates a default plant instance when information is missing.
         """
-        result = []
-        for garden in Garden.all_gardens:
-            score = garden.garden_score()
-            if cls.height_valid(score):
-                print("Height validation test: True")
-                result.append(f"{garden.name}: {score}")
-            else:
-                print("Height validation test: False")
-        final_str = ", ".join(result)
-        print(f"Garden scores - {final_str}")
-        print(f"Total gardens managed: {Garden.total_garden}\n")
-    display_garden_scores = classmethod(display_garden_scores)
+        return cls("Unknown plant", 0.0, 0)
+
+    def show(self) -> None:
+        """
+        Displays basic plant info and increments the show counter.
+        """
+        self._stats.show_calls += 1
+        print(f"{self.name}: {self._height:.1f}cm, {self._age} days old")
+
+    def grow(self) -> None:
+        """
+        Increases height and increments the grow counter.
+        """
+        self._stats.grow_calls += 1
+        self._height += 8.0
+
+    def age(self) -> None:
+        """
+        Increases age and increments the age counter.
+        """
+        self._stats.age_calls += 1
+        self._age += 20
+
+
+class Flower(Plant):
+    """
+    Plant type that can bloom and has a specific color.
+    """
+    def __init__(self, name: str, height: float, age: int, color: str) -> None:
+        super().__init__(name, height, age)
+        self.color: str = color
+        self._bloomed: bool = False
+
+    def show(self) -> None:
+        super().show()
+        print(f"Color: {self.color}")
+        if self._bloomed:
+            print(f"{self.name} is blooming beautifully!")
+        else:
+            print(f"{self.name} has not bloomed yet")
+
+    def bloom(self) -> None:
+        """
+        Triggers the blooming state of the flower.
+        """
+        self._bloomed = True
+
+
+class Tree(Plant):
+    """
+    Plant type that tracks shade production statistics.
+    """
+    def __init__(self, name: str, height: float, age: int,
+                 trunk_diameter: float) -> None:
+        super().__init__(name, height, age)
+        self.trunk_diameter: float = trunk_diameter
+        self._shade_calls: int = 0
+
+    def show(self) -> None:
+        super().show()
+        print(f"Trunk diameter: {self.trunk_diameter:.1f}cm")
+
+    def produce_shade(self) -> None:
+        """
+        Simulates shade production and tracks calls.
+        """
+        self._shade_calls += 1
+        print(f"Tree {self.name} now produces a shade of {self._height:.1f}cm "
+              f"long and {self.trunk_diameter:.1f}cm wide.")
+
+
+class Seed(Flower):
+    """
+    Specialized flower that tracks seed production after blooming.
+    """
+    def __init__(self, name: str, height: float, age: int, color: str) -> None:
+        super().__init__(name, height, age, color)
+        self.seeds: int = 0
+
+    def show(self) -> None:
+        super().show()
+        print(f"Seeds: {self.seeds}")
+
+    def bloom(self) -> None:
+        super().bloom()
+        self.seeds = 42
+
+
+def display_plant_stats(plant: Plant) -> None:
+    """
+    Global function to display statistics for any type of plant.
+    """
+    print(f"[statistics for {plant.name}]")
+    plant._stats.display()
+    if isinstance(plant, Tree):
+        print(f"{plant._shade_calls} shade")
 
 
 def main() -> None:
-
     """
-    Main execution block to demonstrate the Garden Management System.
+    Demonstrates the garden analytics and advanced OOP patterns.
     """
-    manager = GardenManager.create_garden_network()
-    alice = Garden("Alice")
-    alice.add_plants(Plant("Oak tree", 100))
-    alice.add_plants(FloweringPlant("Rose", 25, "red"))
-    alice.add_plants(PrizeFlower("Sunflower", 50, "Yellow", 10))
-    manager.show_garden(alice)
+    print("=== Garden statistics ===")
 
-    bob = Garden("Bob")
-    bob.add_plants(Plant("Lily", 10))
-    bob.add_plants(FloweringPlant("Roses", 35, "red"))
-    bob.add_plants(PrizeFlower("Sunflower", 78, "Yellow", 10))
-    manager.show_garden(bob)
+    print("=== Check year-old")
+    print(f"Is 30 days more than a year? -> {Plant.is_older_than_year(30)}")
+    print(f"Is 400 days more than a year? -> {Plant.is_older_than_year(400)}")
 
-    GardenManager.display_garden_scores()
+    print("\n=== Flower")
+    rose = Flower("Rose", 15.0, 10, "red")
+    rose.show()
+    display_plant_stats(rose)
+    print("[asking the rose to grow and bloom]")
+    rose.grow()
+    rose.bloom()
+    rose.show()
+    display_plant_stats(rose)
+
+    print("\n=== Tree")
+    oak = Tree("Oak", 200.0, 365, 5.0)
+    oak.show()
+    display_plant_stats(oak)
+    print("[asking the oak to produce shade]")
+    oak.produce_shade()
+    display_plant_stats(oak)
+
+    print("\n=== Seed")
+    sunflower = Seed("Sunflower", 80.0, 45, "yellow")
+    sunflower.show()
+    print("[make sunflower grow, age and bloom]")
+    sunflower.grow()
+    sunflower.age()
+    sunflower.bloom()
+    sunflower.show()
+    display_plant_stats(sunflower)
+
+    print("\n=== Anonymous")
+    anon = Plant.create_anonymous()
+    anon.show()
+    display_plant_stats(anon)
 
 
 if __name__ == "__main__":

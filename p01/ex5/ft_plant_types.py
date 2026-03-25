@@ -1,153 +1,115 @@
+#!/usr/bin/env python3
+
 class Plant:
     """
-    Base class representing a generic plant with common features
-    like name, height, and age.
+    Base class representing a generic plant with common features.
     """
-    def __init__(self, name: str, height: int, age: int) -> None:
-        """
-        Initialize the basic attributes of a plant.
-        """
+    def __init__(self, name: str, height: float, age: int) -> None:
         self.name = name
-        self.height = height
-        self.age = age
+        self._height = float(height)
+        self._age = age
+
+    def show(self) -> None:
+        """
+        Standard display for any plant.
+        """
+        print(f"{self.name}: {self._height:.1f}cm, {self._age} days old")
+
+    def grow(self) -> None:
+        self._height += 0.8
+
+    def age(self) -> None:
+        self._age += 1
 
 
 class Flower(Plant):
     """
     Specialized plant type that has a color and the ability to bloom.
     """
-    def __init__(self, name: str, height: int, age: int, color: str) -> None:
-        """
-        Initialize a flower by calling the parent setup and adding color.
-        """
+    def __init__(self, name: str, height: float, age: int, color: str) -> None:
         super().__init__(name, height, age)
         self.color = color
+        self._bloomed = False
 
-    def is_flower(self) -> bool:
-        """
-        Identify if the plant belongs to the Flower category.
-        """
-        return True
-
-    def is_vegetable(self) -> bool:
-        """
-        Identify if the plant belongs to the Vegetable category.
-        """
-        return False
-
-    def is_tree(self) -> bool:
-        """
-        Identify if the plant belongs to the Tree category.
-        """
-        return False
-
-    def bloom(self, flower: "Flower") -> str:
-        """
-        Simulate the blooming behavior based on the plant's age.
-        """
-        if flower.age > 8:
-            return "blooming beautifully"
+    def show(self) -> None:
+        super().show()
+        print(f"Color: {self.color}")
+        if self._bloomed:
+            print(f"{self.name} is blooming beautifully!")
         else:
-            return "not blooming"
+            print(f"{self.name} has not bloomed yet")
+
+    def bloom(self) -> None:
+        self._bloomed = True
 
 
 class Tree(Plant):
     """
-    Specialized plant type that tracks trunk diameter and produces shade.
+    Specialized plant type with trunk diameter and shade production.
     """
-    def __init__(self, name: str, height: int, age: int,
-                 trunk_diameter: int) -> None:
-        """
-        Initialize a tree with specialized trunk measurements.
-        """
+    def __init__(self, name: str, height: float, age: int,
+                 trunk_diameter: float) -> None:
         super().__init__(name, height, age)
         self.trunk_diameter = trunk_diameter
 
-    def is_tree(self) -> bool:
-        """
-        Identify if the plant belongs to the Tree category.
-        """
-        return True
+    def show(self) -> None:
+        super().show()
+        print(f"Trunk diameter: {self.trunk_diameter:.1f}cm")
 
-    def is_flower(self) -> bool:
-        """
-        Identify if the plant belongs to the Flower category.
-        """
-        return False
-
-    def is_vegetable(self) -> bool:
-        """
-        Identify if the plant belongs to the Vegetable category.
-        """
-        return False
-
-    def produce_shade(self, tree: "Tree") -> int:
-        """
-        Calculate the shade coverage based on the tree's trunk diameter.
-        """
-        shade = tree.trunk_diameter * 1.56
-        return int(shade)
+    def produce_shade(self) -> None:
+        print(f"Tree {self.name} now produces a shade of {self._height:.1f}cm "
+              f"long and {self.trunk_diameter:.1f}cm wide.")
 
 
 class Vegetable(Plant):
     """
-    Specialized plant type grown for nutritional value and
-    specific harvest seasons.
+    Specialized plant type with nutritional value that grows with time.
     """
-    def __init__(self, name: str, height: int, age: int,
-                 harvest_season: str, nutritional_value: str) -> None:
-        """
-        Initialize a vegetable with its harvest and
-        nutritional characteristics.
-        """
+    def __init__(self, name: str, height: float, age: int,
+                 harvest_season: str) -> None:
         super().__init__(name, height, age)
         self.harvest_season = harvest_season
-        self.nutritional_value = nutritional_value
+        self.nutritional_value = 0
 
-    def is_vegetable(self) -> bool:
-        """
-        Identify if the plant belongs to the Vegetable category.
-        """
-        return True
+    def show(self) -> None:
+        super().show()
+        print(f"Harvest season: {self.harvest_season}")
+        print(f"Nutritional value: {self.nutritional_value}")
 
-    def is_flower(self) -> bool:
-        """
-        Identify if the plant belongs to the Flower category.
-        """
-        return False
+    def grow(self) -> None:
+        super().grow()
+        self.nutritional_value += 1
 
-    def is_tree(self) -> bool:
-        """
-        Identify if the plant belongs to the Tree category.
-        """
-        return False
+    def age(self) -> None:
+        super().age()
+        self.nutritional_value += 1
 
 
 def main() -> None:
-    """
-    Entry point for demonstrating the specialized
-    characteristics of different plant types.
-    """
-    print("=== Garden Plant Types ===\n")
-    plants = [Flower("Rose", 25, 30, "red"),
-              Flower("Sunflower", 80, 45, "yellow"),
-              Tree("Oak", 500, 1825, 50), Tree("Maple", 120, 730, 20),
-              Vegetable("Tomato", 80, 90, "summer harvest", "vitamin C"),
-              Vegetable("Carrot", 25, 90, "spring harvest", "vitamin B")]
-    for plt in plants:
-        if plt.is_flower():
-            print(f"{plt.name} (Flower): {plt.height}cm, {plt.age} days,\
-{plt.color} color")
-            print(f"{plt.name} is {plt.bloom(plt)}!\n")
-        elif plt.is_tree():
-            print(f"{plt.name} (Tree): {plt.height}cm, {plt.age} days,\
-{plt.trunk_diameter}cm diameter")
-            print(f"{plt.name} provides {plt.produce_shade(plt)} square \
-meters of shade\n")
-        elif plt.is_vegetable():
-            print(f"{plt.name} (Vegetable): {plt.height}cm, {plt.age}\
- days, {plt.harvest_season}")
-            print(f"{plt.name} is rich in {plt.nutritional_value}\n")
+    print("=== Garden Plant Types ===")
+
+    print("=== Flower")
+    rose = Flower("Rose", 15.0, 10, "red")
+    rose.show()
+    print("[asking the rose to bloom]")
+    rose.bloom()
+    rose.show()
+
+    print("\n=== Tree")
+    oak = Tree("Oak", 200.0, 365, 5.0)
+    oak.show()
+    print("[asking the oak to produce shade]")
+    oak.produce_shade()
+
+    print("\n=== Vegetable")
+    tomato = Vegetable("Tomato", 5.0, 10, "April")
+    tomato.show()
+    print("[make tomato grow and age for 20 days]")
+
+    for _ in range(20):
+        tomato.grow()
+        tomato.age()
+    tomato.show()
 
 
 if __name__ == "__main__":

@@ -1,86 +1,78 @@
-class SecurePlant:
+#!/usr/bin/env python3
+
+class Plant:
     """
-    Represents a plant with encapsulated attributes and specific
-    validation logic.
+    Represents a plant with protected attributes and data integrity validation.
     """
-    def __init__(self, name: str, height: int, age: int) -> None:
+    def __init__(self, name: str, height: float, age: int) -> None:
         """
-        Initializes the plant instance with private height and age.
+        Initializes the plant instance using setters for validation.
         """
-        self.name = name
-        self.__height = height
-        self.__age = age
+        self.name: str = name
+        self._height: float = 0.0
+        self._age: int = 0
 
-    def set_height(self) -> int:
-        """
-        Returns the private height attribute.
-        """
-        return self.__height
+        print("=== Garden Security System ===")
+        self.set_height(height)
+        self.set_age(age)
+        print("Plant created: ", end="")
+        self.show()
 
-    def set_age(self) -> int:
+    def get_height(self) -> float:
         """
-        Returns the private age attribute.
+        Returns the protected height value.
         """
-        return self.__age
+        return self._height
 
-    def get_height(self, plant: "SecurePlant") -> bool:
+    def set_height(self, value: float) -> None:
         """
-        Validates if the provided plant's height is strictly positive.
+        Validates and sets the plant height.
         """
-        if plant.set_height() > 0:
-            return True
+        if value < 0:
+            print(f"{self.name}: Error, height can't be negative")
+            print("Height update rejected")
         else:
-            return False
+            self._height = float(value)
 
-    def get_age(self, plant: "SecurePlant") -> bool:
+    def get_age(self) -> int:
         """
-        Validates if the provided plant's age is strictly positive.
+        Returns the protected age value.
         """
-        if plant.set_age() > 0:
-            return True
-        else:
-            return False
+        return self._age
 
-    def validplants(self, plant: "SecurePlant") -> int | None:
+    def set_age(self, value: int) -> None:
         """
-        Performs a global security check and prints alerts for invalid data.
+        Validates and sets the plant age.
         """
-        h_valid = plant.get_height(plant)
-        a_valid = plant.get_age(plant)
-        if (not h_valid and not a_valid):
-            print(f"Invalid operation attemped: "
-                  f"height {self.set_height()} [REJECTED]")
-            print(f"Invalid operation attemped: "
-                  f"age {self.set_age()} [REJECTED]")
-            print("Security: Negative height and age rejected")
-            return
-        if (not h_valid):
-            print(f"\nInvalid operation attemped: "
-                  f"height {self.set_height()} [REJECTED]")
-            print("Security: Negative height rejected")
-            return
-        if (not a_valid):
-            print(f"\nInvalid operation attemped: "
-                  f"age {self.set_age()} [REJECTED]")
-            print("Security: Negative age rejected")
-            return
+        if value < 0:
+            print(f"{self.name}: Error, age can't be negative")
+            print("Age update rejected")
         else:
-            return 1
+            self._age = int(value)
+
+    def show(self) -> None:
+        """
+        Displays the current state of the plant.
+        """
+        print(f"{self.name}: {self._height:.1f}cm, {self._age} days old")
 
 
 def main() -> None:
     """
-    Demonstrates the plant security system and data integrity checks.
+    Demonstrates data integrity checks for the garden security system.
     """
-    print("=== Garden security ===")
-    plants = [SecurePlant("Rose", 25, 30)]
-    for plt in plants:
-        if plt.validplants(plt) == 1:
-            print(f"Plant created: {plt.name}")
-            print(f"Height updated: {plt.set_height()}cm [OK]")
-            print(f"Age updated: {plt.set_age()} days [OK]")
-            print(f"\nCurrent plant: {plt.name} ({plt.set_height()}cm, \
-{plt.set_age()} days)")
+    rose = Plant("Rose", 15.0, 10)
+
+    print("\nHeight updated: 25cm")
+    rose.set_height(25)
+    print("Age updated: 30 days\n")
+    rose.set_age(30)
+
+    rose.set_height(-5)
+    rose.set_age(-1)
+
+    print("\nCurrent state: ", end="")
+    rose.show()
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def ft_garden_intro() -> None:
     """
     Displays basic information about a plant in the garden.
