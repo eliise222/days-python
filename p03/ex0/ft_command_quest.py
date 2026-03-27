@@ -1,23 +1,22 @@
 import sys
 
 
-def main():
+def main() -> None:
+    """Entry point of the Command Quest script."""
     print("=== Command Quest ===")
 
-    total = len(sys.argv)
-    if total == 1:
-        print("No Arguments provided!")
-        print("Program name:", sys.argv[0])
-        print("Arguments received:", total)
-    else:
-        print("Program name:", sys.argv[0])
-        print("Arguments received:", total - 1)
+    print(f"Program name: {sys.argv[0]}")
 
-        nb = 1
-        while nb < total:
-            print("Argument", str(nb) + ":", sys.argv[nb])
-            nb += 1
-        print("Total arguments:", total)
+    total_args: int = len(sys.argv)
+
+    if total_args == 1:
+        print("No arguments provided!")
+    else:
+        print(f"Arguments received: {total_args - 1}")
+        for i in range(1, total_args):
+            print(f"Argument {i}: {sys.argv[i]}")
+
+    print(f"Total arguments: {total_args}\n")
 
 
 if __name__ == "__main__":
