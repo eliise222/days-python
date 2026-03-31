@@ -1,4 +1,4 @@
-def main():
+def main() -> None:
     RESET = "\033[0m"
     ORANGE = "\033[33m"
     VERT = "\033[32m"
@@ -8,7 +8,7 @@ def main():
     print("=== CYBER ARCHIVES = VAULT SECURITY SYSTEM ===\n")
 
     print(f"{ORANGE}Initiating secure vault access...{RESET}")
-    print("Vault connection established with failsafe protocole\n")
+    print("Vault connection established with failsafe protocols\n")
 
     print(f"{BLEU}SECURE EXTRACTION:{RESET}")
     try:
@@ -31,27 +31,18 @@ def main():
 
     print(f"\n{BLEU}SECURE PRESERVATION:{RESET}")
     try:
-        with open("security_protocols.txt", 'r') as f:
-
-            contenu_protoc = f.read()
-            print(contenu_protoc)
-
-    except FileNotFoundError:
         with open("security_protocols.txt", 'w') as f:
-
-            f.write("[CLASSIFIED] New security protocols archived")
-
-        with open("security_protocols.txt", 'r') as f:
-            contenu_protoc = f.read()
-            print(contenu_protoc)
+            message = "[CLASSIFIED] New security protocols archived"
+            f.write(message)
+            print(message)
 
     except Exception as e:
         print(f"{ROUGE}[ERROR] An error was found : {e}{RESET}")
 
     print(f"{ORANGE}Vault automatically sealed upon completion\n{RESET}")
 
-    print(f"{VERT}All vault operations completed with maximum \
-security.{RESET}")
+    print(f"{VERT}All vault operations completed with maximum "
+          f"security.{RESET}")
 
 
 if __name__ == "__main__":

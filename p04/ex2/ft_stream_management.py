@@ -1,7 +1,7 @@
 import sys
 
 
-def main():
+def main() -> None:
 
     ROUGE = "\033[31m"
     VERT = "\033[32m"

@@ -1,4 +1,4 @@
-def main():
+def main() -> None:
     print("=== CYBER ARCHIVES = PRESERVATION SYSTEM ===\n")
 
     VERT = "\033[32m"
@@ -6,29 +6,29 @@ def main():
     BLEU = "\033[34m"
     ROUGE = "\033[31m"
 
+    entries: list[str] = [
+        "[ENTRY 001] New quantum algorithm discovered",
+        "[ENTRY 002] Efficiency increased by 347%",
+        "[ENTRY 003] Archived by Data Archivist trainee"
+                         ]
+
     try:
         print("Initializing new storage unit: new_discovery.txt")
         f = open("new_discovery.txt", 'w')
         print(f"{VERT}Storage unit created successfully...\n{RESET}")
 
         print(f"{BLEU}Inscribing preservation data...{RESET}")
-        f.write("[ENTRY 001] New quantum algorithm discovered")
-        f.write("\n[ENTRY 002] Efficiency increased by 347%")
-        f.write("\n[ENTRY 003] Archived by Data Archivist trainee")
+        for entry in entries:
+            f.write(entry + "\n")
+            print(f"{entry}")
 
         f.close()
 
-        f = open("new_discovery.txt", 'r')
-        contenu = f.read()
-        print(contenu)
-
-        print(f"\n{VERT}Data inscription complete.{RESET} Storage unit {ROUGE}\
-sealed{RESET}")
-        f.close()
+        print(f"\n{VERT}Data inscription complete.{RESET} Storage unit {ROUGE}"
+              f"sealed{RESET}")
         print("Archive 'new_discovery.txt' ready for long-term preservation.")
 
     except OSError as e:
-        f.close()
         print(f"ERROR : {e}")
 
 
