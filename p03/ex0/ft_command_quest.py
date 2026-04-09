@@ -2,7 +2,6 @@ import sys
 
 
 def main() -> None:
-    """Entry point of the Command Quest script."""
     print("=== Command Quest ===")
 
     print(f"Program name: {sys.argv[0]}")
