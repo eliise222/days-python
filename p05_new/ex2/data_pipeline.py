@@ -1,11 +1,15 @@
 from abc import abstractmethod, ABC
-from typing import Any, Sequence
-import typing
+from typing import Any, Protocol, Sequence
+
+
+class ExportPlugin(Protocol):
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        pass
 
 
 class DataProcessor(ABC):
     def __init__(self) -> None:
-        self._storage: list[typing.Tuple[int, str]] = []
+        self._storage: list[tuple[int, str]] = []
         self.count: int = 0
         self.total_processed: int = 0
 
@@ -18,6 +22,7 @@ class DataProcessor(ABC):
         pass
 
     def output(self) -> tuple[int, str]:
+        """Action : (Héritée) Renvoie le rang et le texte."""
         if not self._storage:
             raise Exception("No data available to output")
         return self._storage.pop(0)
@@ -91,7 +96,7 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise Exception("Improper log data")
 
-        list_of_data: list[dict[str, Any]] = data if isinstance(data, list)\
+        list_of_data: list[dict[str, Any]] = data if isinstance(data, list) \
             else [data]
 
         for d in list_of_data:
@@ -108,7 +113,7 @@ class DataStream:
     def register_processor(self, proc: DataProcessor) -> None:
         self._processors.append(proc)
 
-    def process_stream(self, stream: list[typing.Any]) -> None:
+    def process_stream(self, stream: list[Any]) -> None:
         for element in stream:
             handled = False
             for proc in self._processors:
@@ -121,61 +126,97 @@ class DataStream:
                       f"{element}")
 
     def print_processors_stats(self) -> None:
-        print("== DataStream statistics ==")
+        print("\n== DataStream statistics ==")
         if not self._processors:
-            print("No processor found, no data\n")
+            print("No processor found, no data")
             return
         for proc in self._processors:
             name = proc.__class__.__name__.replace("Processor", " Processor")
             print(f"{name}: total {proc.total_processed} items processed, "
                   f"remaining {len(proc._storage)} on processor")
 
+    def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
+        for proc in self._processors:
+            extract_data: list[tuple[int, str]] = []
+            for _ in range(nb):
+                try:
+                    extract_data.append(proc.output())
+                except Exception:
+                    break
+            if extract_data:
+                plugin.process_output(extract_data)
+
+
+class CSVExport:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        value = []
+        for idt, val in data:
+            value.append(str(val))
+        result = ",".join(value)
+        print("CSV Output:")
+        print(result)
+
+
+class JSONExport:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        pair = []
+        for idt, val in data:
+            pair.append(f'"item_{idt}": "{val}"')
+        result = "{" + ", ".join(pair) + "}"
+
+        print("JSON Output:")
+        print(result)
+
 
 def main() -> None:
-    print("=== Code Nexus - Data Stream ===\n")
-    print("Initialize Data Stream...")
+    stream = DataStream()
+    stream.register_processor(NumericProcessor())
+    stream.register_processor(TextProcessor())
+    stream.register_processor(LogProcessor())
 
-    stream_manager = DataStream()
-    stream_manager.print_processors_stats()
+    batch_1 = ['Hello world', [3.14, -1, 2.71],
+               [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use \
+ssh instead'},
+                {'log_level': 'INFO', 'log_message': 'User wil is connected'}],
+               42, ['Hi', 'five']]
 
-    print("Registering Numeric Processor")
-    num_proc = NumericProcessor()
-    stream_manager.register_processor(num_proc)
+    print("=== Code Nexus - Data Pipeline ===\n")
+    print("Initialize Data Stream...\n")
 
-    batch = [
-        'Hello world',
-        [3.14, -1, 2.71],
-        [{'log_level': 'WARNING', 'log_message':
-          'Telnet access! Use ssh instead'},
-         {'log_level': 'INFO', 'log_message': 'User wil is connected'}],
-        42,
-        ['Hi', 'five']
+    print("== DataStream statistics ==")
+    print("No processor found, no data\n")
+
+    print("Registering Processors\n")
+
+    print(f"Send first batch of data on stream: {batch_1}\n")
+
+    stream.process_stream(batch_1)
+    stream.print_processors_stats()
+
+    print("\nSend 3 processed data from each processor to a CSV plugin:")
+    csv_plugin = CSVExport()
+    stream.output_pipeline(3, csv_plugin)
+
+    stream.print_processors_stats()
+
+    batch_2 = [
+        21, ['I love AI', 'LLMs are wonderful', 'Stay healthy'],
+        [{'log_level': 'ERROR', 'log_message': '500 server crash'},
+         {'log_level': 'NOTICE', 'log_message': 'Certificate expires in 10 \
+days'}],
+        [32, 42, 64, 84, 128, 168], 'World hello'
     ]
 
-    print(f"\nSend first batch of data on stream: {batch}\n")
-    stream_manager.process_stream(batch)
-    stream_manager.print_processors_stats()
+    print(f"\nSend another batch of data: {batch_2}")
 
-    print("\nRegistering other data processors")
-    txt_proc = TextProcessor()
-    log_proc = LogProcessor()
-    stream_manager.register_processor(txt_proc)
-    stream_manager.register_processor(log_proc)
+    stream.process_stream(batch_2)
+    stream.print_processors_stats()
 
-    print("Send the same batch again")
-    stream_manager.process_stream(batch)
-    stream_manager.print_processors_stats()
+    print("\nSend 5 processed data from each processor to a JSON plugin:")
+    JSON_plugin = JSONExport()
+    stream.output_pipeline(5, JSON_plugin)
 
-    print("\nConsume some elements from the data processors: Numeric 3, Text 2"
-          ", Log 1")
-    for _ in range(3):
-        num_proc.output()
-    for _ in range(2):
-        txt_proc.output()
-    for _ in range(1):
-        log_proc.output()
-
-    stream_manager.print_processors_stats()
+    stream.print_processors_stats()
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 from abc import abstractmethod, ABC
-from typing import Any
+from typing import Any, Sequence
 
 
 class DataProcessor(ABC):
-    def __init__(self):
-        self._storage: list[str] = []
+    def __init__(self) -> None:
+        self._storage: list[tuple[int, str]] = []
         self.count: int = 0
 
     @abstractmethod
@@ -16,7 +16,6 @@ class DataProcessor(ABC):
         pass
 
     def output(self) -> tuple[int, str]:
-
         """Action : (Héritée) Renvoie le rang et le texte."""
         if not self._storage:
             raise Exception("No data available to output")
@@ -35,17 +34,17 @@ class NumericProcessor(DataProcessor):
             return True
         return False
 
-    def ingest(self, data: int | float | list[int | float]) -> None:
+    def ingest(self, data: int | float | Sequence[int | float]) -> None:
         """Action : Reçoit des nombres, les convertit en chaînes de
           caractères (str) et les ajoute à la file d'attente interne."""
         if not self.validate(data):
             raise Exception("Improper numeric data")
 
-        list_of_data = []
-        if isinstance(data, list):
-            list_of_data = data
-        else:
+        list_of_data: list[int | float] = []
+        if isinstance(data, (int, float)):
             list_of_data.append(data)
+        else:
+            list_of_data.extend(data)
 
         for d in list_of_data:
             self._storage.append((self.count, str(d)))
@@ -70,7 +69,7 @@ class TextProcessor(DataProcessor):
         if not self.validate(data):
             raise Exception("Improper text data")
 
-        list_of_data = data if type(data) is list else [data]
+        list_of_data: list[str] = data if isinstance(data, list) else [data]
 
         for d in list_of_data:
             self._storage.append((self.count, str(d)))
@@ -87,11 +86,12 @@ class LogProcessor(DataProcessor):
             return all(type(d) is dict and "log_level" in d for d in data)
         return False
 
-    def ingest(self, data: dict | list[dict]) -> None:
+    def ingest(self, data: dict[str, Any] | list[dict[str, Any]]) -> None:
         if not self.validate(data):
             raise Exception("Improper log data")
 
-        list_of_data = data if type(data) is list else [data]
+        list_of_data: list[dict[str, Any]] = data if isinstance(data, list)\
+            else [data]
 
         for d in list_of_data:
             log_str = f"{d['log_level']}: {d['log_message']}"
@@ -112,15 +112,17 @@ def main() -> None:
 
     print(" Test invalid ingestion of string 'foo' without prior validataion:")
     try:
-        num_proc.ingest("foo")
-    except Exception as e:
-        print(f" Got exception: {e}")
+        num_proc.ingest("foo")  # type: ignore
+    except Exception as err:
+        print(f" Got exception: {err}")
+
     data_num_ok = [1, 2, 3, 4, 5]
     print(f" Processing data: {data_num_ok}")
     if num_proc.validate(data_num_ok) is True:
         num_proc.ingest(data_num_ok)
     print(" Extracting 3 values...")
-    for e in range(3):
+
+    for _ in range(3):
         rank, value = num_proc.output()
         print(f" Numeric value {rank}: {value}")
 
