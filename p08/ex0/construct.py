@@ -18,8 +18,8 @@ def main():
         print("To enter the construct, run:")
         print("python -m venv matrix_env")
         print("source matrix_env/bin/activate # On Unix")
-        print(r"matrix_env\Scripts\activate # On Windows\n")
-        print("Then run this program again.")
+        print(r"matrix_env\Scripts\activate # On Windows")
+        print("\nThen run this program again.")
 
     else:
         venv_name = os.path.basename(sys.prefix)
