@@ -20,7 +20,8 @@ def check_dependencies() -> bool:
             return False
 
     def version_check(vers: str) -> str:
-        return importlib.import_module(vers).__version__
+        version: str = str(importlib.import_module(vers).__version__)
+        return version
 
     for package, msg in packages.items():
         spec = module_check(package)
@@ -46,7 +47,7 @@ def analyse() -> None:
     print("Generating visualization...\n")
     plt.figure(figsize=(10, 6))
     plt.hist(data, bins=30, color='green', edgecolor='black')
-    plt.title('Matric Data Distribution')
+    plt.title('Matrix Data Distribution')
     plt.xlabel('Value')
     plt.ylabel('Frequency')
     plt.savefig('matrix_analysis.png')

@@ -5,7 +5,7 @@ import site
 is_venv = sys.prefix != sys.base_prefix
 
 
-def main():
+def main() -> None:
     if not is_venv:
         print("\nMATRIX STATUS: You're still plugged in\n")
 
