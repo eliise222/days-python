@@ -15,25 +15,30 @@ class SpaceStation(BaseModel):
 
 
 def main() -> None:
-    station = SpaceStation(
-                            station_id="ISS001",
-                            name="International Space Station",
-                            crew_size=6,
-                            power_level=85.5,
-                            oxygen_level=92.3,
-                            last_maintenance="2024-01-15T10:30:00"
-                          )
+    try:
+        station = SpaceStation(
+                                station_id="ISS001",
+                                name="International Space Station",
+                                crew_size=6,
+                                power_level=85.5,
+                                oxygen_level=92.3,
+                                last_maintenance=datetime.fromisoformat("2024\
+-01-15T10:30:00")
+                            )
 
-    print("Space Station Data Validation")
-    print("=" * 40)
-    print("Valid station created")
-    print(f"ID: {station.station_id}")
-    print(f"Name: {station.name}")
-    print(f"Crew: {station.crew_size} people")
-    print(f"Power: {station.power_level}%")
-    print(f"Oxygen: {station.oxygen_level}%")
-    if station.is_operational:
-        print("Status: Operational")
+        print("Space Station Data Validation")
+        print("=" * 40)
+        print("Valid station created")
+        print(f"ID: {station.station_id}")
+        print(f"Name: {station.name}")
+        print(f"Crew: {station.crew_size} people")
+        print(f"Power: {station.power_level}%")
+        print(f"Oxygen: {station.oxygen_level}%")
+        if station.is_operational:
+            print("Status: Operational\n")
+    except ValidationError as e:
+        for error in e.errors():
+            print(error["msg"])
 
     print("=" * 40)
     print("Expected validation error:")
@@ -44,7 +49,8 @@ def main() -> None:
                         crew_size=50,
                         power_level=85.5,
                         oxygen_level=92.3,
-                        last_maintenance="2024-01-15T10:30:00"
+                        last_maintenance=datetime.fromisoformat("2024-01-15T\
+10:30:00")
                     )
     except ValidationError as e:
         for error in e.errors():

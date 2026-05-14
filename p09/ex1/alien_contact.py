@@ -38,43 +38,49 @@ at least 3 witnesses")
 
 
 def main() -> None:
-    contact = AlienContact(
-                            contact_id="AC_2024_001",
-                            timestamp="2024-01-15T10:30:00",
-                            location="Area 51, Nevada",
-                            contact_type="radio",
-                            signal_strength=8.5,
-                            duration_minutes=45,
-                            witness_count=5,
-                            message_received="Greetings from Zeta Reticuli",
-                            is_verified=False
-                          )
-    print("Alien Contact Log Validation")
-    print("=" * 40)
-    print("Valid contact report:")
-    print(f"ID: {contact.contact_id}")
-    print(f"Type: {contact.contact_type.value}")
-    print(f"Location: {contact.location}")
-    print(f"Signal: {contact.signal_strength}/10")
-    print(f"Duration: {contact.duration_minutes} minutes")
-    print(f"Witnesses: {contact.witness_count}")
-    print(f"Message: '{contact.message_received}'\n")
+    try:
+        contact = AlienContact(
+                                contact_id="AC_2024_001",
+                                timestamp=datetime.fromisoformat("2024-01-15T10:\
+30:00"),
+                                location="Area 51, Nevada",
+                                contact_type=ContactType.radio,
+                                signal_strength=8.5,
+                                duration_minutes=45,
+                                witness_count=5,
+                                message_received="Greetings from \
+                                Zeta Reticuli",
+                                is_verified=False
+                            )
+        print("Alien Contact Log Validation")
+        print("=" * 40)
+        print("Valid contact report:")
+        print(f"ID: {contact.contact_id}")
+        print(f"Type: {contact.contact_type.value}")
+        print(f"Location: {contact.location}")
+        print(f"Signal: {contact.signal_strength}/10")
+        print(f"Duration: {contact.duration_minutes} minutes")
+        print(f"Witnesses: {contact.witness_count}")
+        print(f"Message: '{contact.message_received}'\n")
+    except ValidationError as e:
+        for error in e.errors():
+            print(error["msg"].replace("Value error, ", ""))
 
-    print("=" * 40)
-    print("Expected validation error:")
+        print("=" * 40)
+        print("Expected validation error:")
     try:
         _ = AlienContact(
-                                        contact_id="AC_2024_001",
-                                        timestamp="2024-01-15T10:30:00",
-                                        location="Area 51, Nevada",
-                                        contact_type="telepathic",
-                                        signal_strength=8.5,
-                                        duration_minutes=45,
-                                        witness_count=2,
-                                        message_received="Greetings from Zeta \
-                                    Reticuli",
-                                        is_verified=False
-                                    )
+                            contact_id="AC_2024_001",
+                            timestamp=datetime.fromisoformat("2024-01-15T10:\
+30:00"),
+                            location="Area 51, Nevada",
+                            contact_type=ContactType.telepathic,
+                            signal_strength=8.5,
+                            duration_minutes=45,
+                            witness_count=2,
+                            message_received="Greetings from Zeta Reticuli",
+                            is_verified=False
+                        )
     except ValidationError as e:
         for error in e.errors():
             print(error["msg"].replace("Value error, ", ""))

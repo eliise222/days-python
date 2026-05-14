@@ -65,7 +65,7 @@ def main() -> None:
     member1 = CrewMember(
                           member_id="CM001",
                           name="Sarah Connor",
-                          rank="commander",
+                          rank=Rank.commander,
                           age=35,
                           specialization="Mission Command",
                           years_experience=10
@@ -74,7 +74,7 @@ def main() -> None:
     member2 = CrewMember(
                           member_id="CM002",
                           name="John Smith",
-                          rank="lieutenant",
+                          rank=Rank.lieutenant,
                           age=28,
                           specialization="Navigation",
                           years_experience=5
@@ -83,35 +83,41 @@ def main() -> None:
     member3 = CrewMember(
                           member_id="CM003",
                           name="Alice Johnson",
-                          rank="officer",
+                          rank=Rank.officer,
                           age=29,
                           specialization="Engineering",
                           years_experience=8
                         )
+    try:
+        mission_one = SpaceMission(
+                                    mission_id="M2024_MARS",
+                                    mission_name=" Mars Colony Establishment",
+                                    destination="Mars",
+                                    launch_date=datetime.fromisoformat("2024-01-15T10:\
+30:00"),
+                                    duration_days=900,
+                                    crew=[member1, member2, member3],
+                                    budget_millions=2500.0
+                                )
 
-    mission_one = SpaceMission(
-                                mission_id="M2024_MARS",
-                                mission_name=" Mars Colony Establishment",
-                                destination="Mars",
-                                launch_date="2024-01-15T10:30:00",
-                                duration_days=900,
-                                crew=[member1, member2, member3],
-                                budget_millions=2500.0
-                               )
+        print("Space Mission Crew Validation")
+        print("=" * 40)
+        print("Valid mission created:")
+        print(f"Mission: {mission_one.mission_name}")
+        print(f"ID: {mission_one.mission_id}")
+        print(f"Destination: {mission_one.destination}")
+        print(f"Duration: {mission_one.duration_days} days")
+        print(f"Budget: ${mission_one.budget_millions}M")
+        print(f"Crew size: {len(mission_one.crew)}")
+        print("Crew members:")
+        for member in mission_one.crew:
+            print(f"{member.name} ({member.rank.value}) - \
+{member.specialization}")
+        print("\n")
+    except ValidationError as e:
+        for error in e.errors():
+            print(error["msg"].replace("Value error, ", ""))
 
-    print("Space Mission Crew Validation")
-    print("=" * 40)
-    print("Valid mission created:")
-    print(f"Mission: {mission_one.mission_name}")
-    print(f"ID: {mission_one.mission_id}")
-    print(f"Destination: {mission_one.destination}")
-    print(f"Duration: {mission_one.duration_days} days")
-    print(f"Budget: ${mission_one.budget_millions}M")
-    print(f"Crew size: {len(mission_one.crew)}")
-    print("Crew members:")
-    for member in mission_one.crew:
-        print(f"{member.name} ({member.rank.value}) - {member.specialization}")
-    print("\n")
     print("=" * 40)
 
     print("Expected validation error:")
@@ -120,7 +126,8 @@ def main() -> None:
                                 mission_id="M2024_MARS",
                                 mission_name=" Mars Colony Establishment",
                                 destination="Mars",
-                                launch_date="2024-01-15T10:30:00",
+                                launch_date=datetime.fromisoformat("2024-01-15T10:\
+30:00"),
                                 duration_days=900,
                                 crew=[member2, member3],
                                 budget_millions=2500.0
